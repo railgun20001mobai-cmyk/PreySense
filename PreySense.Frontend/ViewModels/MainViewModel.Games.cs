@@ -197,7 +197,7 @@ public partial class MainViewModel
     public void SaveSelectedGameProfile()
     {
         if (SelectedGameProfile is { } game && !TryCreateGameTuningPlan(game, out _, out string status))
-        { GameModeStatus = status; return; }
+        { GameModeStatus = LocalizationService.Translate(status); return; }
         SaveGameProfiles();
         // Recreate only on explicit edits; not on every foreground notification.
         if (IsGameModeEnabled && _gameModeReady) _ = UpdateGameWatcherAsync();

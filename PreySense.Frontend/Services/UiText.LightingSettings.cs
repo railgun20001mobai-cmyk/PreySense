@@ -24,7 +24,7 @@ internal static partial class UiText
         Spanish["Effect"] = "Efecto";
         French["Effect"] = "Effet";
         Turkish["Effect"] = "Efekt";
-        Chinese["Lighting Settings"] = "灯光模式设置";
+        Chinese["Lighting Settings"] = "灯光设置";
         Chinese["Mode Colors"] = "模式颜色";
         Hindi["Lighting Settings"] = "लाइटिंग मोड सेटिंग्स";
         Hindi["Mode Colors"] = "मोड के रंग";

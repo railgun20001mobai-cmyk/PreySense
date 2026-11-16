@@ -373,7 +373,7 @@ public partial class FanCurveWindow : Window
     private void ReportFailure(Exception error)
     {
         AppLogger.Error($"Fan operation failed: {error}");
-        OperationError.Text = $"Fan operation failed: {error.Message}";
+        OperationError.Text = LocalizationService.Format("Fan operation failed: {0}", error.Message);
         OperationError.Visibility = Visibility.Visible;
     }
 

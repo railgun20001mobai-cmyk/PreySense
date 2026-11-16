@@ -1,6 +1,7 @@
 using PreySense.Core.Configuration;
 using PreySense.Core.Driver;
 using PreySense.Core.Hardware;
+using PreySense.Frontend.Services;
 using PreySense.Mode;
 
 namespace PreySense.Frontend.ViewModels;
@@ -121,10 +122,10 @@ public partial class MainViewModel
             var gpuBefore = plan.Apply.ApplyGpuLimits
                 ? await Task.Run(() => (GameGpuProfileReader ?? ReadGameGpuProfile)(game.PowerMode)) : null;
             if (plan.Apply.ApplyGpuLimits && gpuBefore == null)
-            { GameModeStatus = "Could not read the current GPU profile."; return false; }
+            { GameModeStatus = LocalizationService.Translate("Could not read the current GPU profile."); return false; }
             var boostBefore = plan.CpuBoost.HasValue ? await Task.Run(GameBoostPolicyReader ?? WindowsCpuBoostPolicy.Read) : null;
             if (plan.CpuBoost.HasValue && boostBefore == null)
-            { GameModeStatus = "Could not read the current CPU boost policy."; return false; }
+            { GameModeStatus = LocalizationService.Translate("Could not read the current CPU boost policy."); return false; }
             _activeGameTuning = plan;
             _gameGpuBefore = gpuBefore;
             _gameBoostBefore = boostBefore;

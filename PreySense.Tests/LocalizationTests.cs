@@ -50,6 +50,65 @@ public class LocalizationTests
     }
 
     [TestMethod]
+    public void HardwareEffectNamesFromLayouts_HaveTranslationsInEveryLanguage()
+    {
+        using var stream = typeof(PreySense.Rgb.OemUsbLightingProtocol).Assembly
+            .GetManifestResourceStream("PreySense.Core.Resources.Rgb.OemUsbKeyboardLayouts.json")!;
+        using var document = System.Text.Json.JsonDocument.Parse(stream);
+        string[] names = document.RootElement.GetProperty("Modes").EnumerateObject()
+            .SelectMany(family => family.Value.EnumerateArray())
+            .Select(mode => mode.GetProperty("name").GetString()!)
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+        Assert.IsNotEmpty(names);
+        foreach (string language in new[] { "zh-CN", "hi-IN", "es-ES", "fr-FR", "tr-TR" })
+        {
+            var table = UiText.For(language)!;
+            foreach (string name in names)
+                Assert.IsTrue(table.ContainsKey(name), $"{language}: missing effect name {name}");
+        }
+        Assert.AreEqual("常亮", UiText.For("zh-CN")!["STATIC"]);
+        Assert.AreEqual("呼吸", UiText.For("zh-CN")!["BREATHING"]);
+    }
+
+    [TestMethod]
+    public void InlineComboBoxEntries_AreTranslated_AndKeepTheirTag()
+    {
+        Exception? failure = null;
+        var thread = new Thread(() =>
+        {
+            string previous = LocalizationService.CurrentLanguage;
+            try
+            {
+                var combo = new System.Windows.Controls.ComboBox();
+                var lightingMode = new System.Windows.Controls.ComboBoxItem { Content = "Dynamic", Tag = "DYN:RainbowCycle" };
+                combo.Items.Add(lightingMode);
+                combo.Items.Add(new System.Windows.Controls.ComboBoxItem { Content = "Breathing", Tag = "HW:1" });
+
+                LocalizationService.SetLanguage("zh-CN", persist: false);
+                LocalizationService.LocalizeComboBoxItems(combo);
+                Assert.AreEqual("动态", (string)lightingMode.Content);
+                Assert.AreEqual("DYN:RainbowCycle", (string)lightingMode.Tag, "Tag must not be translated.");
+                Assert.AreEqual("呼吸", (string)((System.Windows.Controls.ComboBoxItem)combo.Items[1]!).Content);
+
+                LocalizationService.SetLanguage("es-ES", persist: false);
+                LocalizationService.LocalizeComboBoxItems(combo);
+                Assert.AreEqual("Dinámico", (string)lightingMode.Content);
+
+                LocalizationService.SetLanguage("en-US", persist: false);
+                LocalizationService.LocalizeComboBoxItems(combo);
+                Assert.AreEqual("Dynamic", (string)lightingMode.Content, "Switching back must restore the original text.");
+            }
+            catch (Exception ex) { failure = ex; }
+            finally { LocalizationService.SetLanguage(previous, persist: false); }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        Assert.IsTrue(thread.Join(TimeSpan.FromSeconds(10)), "ComboBox localization test timed out.");
+        if (failure is not null) System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(failure).Throw();
+    }
+
+    [TestMethod]
     public void Test_Five_Languages_Translate_Labels_And_Dialogs()
     {
         string previous = LocalizationService.CurrentLanguage;

@@ -40,6 +40,10 @@ public static class LocalizationService
         ApplyCulture();
         EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent,
             new RoutedEventHandler((sender, _) => LocalizeWindow((Window)sender)));
+        // Dropdown entries declared inline as ComboBoxItem are only attached to the visual
+        // tree when the popup opens, so the window walk never reaches them.
+        EventManager.RegisterClassHandler(typeof(ComboBox), FrameworkElement.LoadedEvent,
+            new RoutedEventHandler((sender, _) => LocalizeComboBoxItems((ComboBox)sender)));
     }
 
     public static void SetLanguage(string language, bool persist = true)
@@ -102,8 +106,29 @@ public static class LocalizationService
             CollectCombos(root, combos);
         foreach (ComboBox combo in combos)
         {
-            if (combo.ItemsSource != null && combo.Items.Count > 0)
-                combo.Items.Refresh();
+            if (combo.ItemsSource != null)
+            {
+                if (combo.Items.Count > 0)
+                    combo.Items.Refresh();
+                continue;
+            }
+            LocalizeComboBoxItems(combo);
+        }
+    }
+
+    /// <summary>
+    /// Translates dropdown entries that are declared inline in XAML. Only the displayed
+    /// content is touched; Tag, SelectedIndex and SelectedValue keep driving the selection
+    /// logic untouched.
+    /// </summary>
+    public static void LocalizeComboBoxItems(ComboBox combo)
+    {
+        if (combo.ItemsSource != null)
+            return;
+        foreach (object item in combo.Items)
+        {
+            if (item is ComboBoxItem comboItem)
+                Apply(comboItem, ContentControl.ContentProperty);
         }
     }
 

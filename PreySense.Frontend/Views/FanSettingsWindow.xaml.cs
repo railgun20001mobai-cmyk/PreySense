@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Windows;
+using PreySense.Frontend.Services;
 using PreySense.Frontend.ViewModels;
 
 namespace PreySense.Frontend.Views;
@@ -38,7 +39,7 @@ public partial class FanSettingsWindow : Window
             AppLogger.Error($"Fan RPM calibration failed: {ex}");
             if (!_closed)
             {
-                CalibrationError.Text = $"Fan RPM calibration failed: {ex.Message}";
+                CalibrationError.Text = LocalizationService.Format("Fan RPM calibration failed: {0}", ex.Message);
                 CalibrationError.Visibility = Visibility.Visible;
             }
         }
