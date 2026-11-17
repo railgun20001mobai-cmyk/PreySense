@@ -324,10 +324,26 @@ namespace PreySense.Frontend.ViewModels
                 if ((DateTime.UtcNow - _lastPhysicalModeKeyUtc).TotalMilliseconds < 80)
                     return;
                 _lastPhysicalModeKeyUtc = DateTime.UtcNow;
-                byte current = PeekPendingOrActiveMode();
-                byte next = CyclePerformanceMode(current);
-                AppLogger.Log($"TurboKey: mode 0x{next:X2} (was 0x{current:X2}); applying.");
-                await SetModeAsync(next);
+                // The local view can trail the EC (firmware-side key handling, a just-finished
+                // AC/battery transition), so cycle from the hardware state and power source.
+                var state = await Task.Run(() =>
+                {
+                    byte mode = _hw.TryGetPowerMode(out byte actual) ? actual : (byte)0xFF;
+                    return (mode, source: _hw.GetPowerSource());
+                });
+                if (_disposed) return;
+                if (state.source != PowerSourceKind.Unknown)
+                    UpdatePowerSourceState(state.source);
+                byte local = PeekPendingOrActiveMode();
+                byte current = ProfileManager.IsSupportedMode(state.mode) ? state.mode : local;
+                byte next = CyclePerformanceMode(current, IsAcConnected);
+                AppLogger.Log($"TurboKey: mode 0x{next:X2} (was 0x{current:X2}, AC={IsAcConnected}); applying.");
+                // A firmware-side switch can leave the UI and the EC on the same predicted mode;
+                // reapply it instead of letting SetModeAsync skip the write as "already active".
+                if (next == local && current != local)
+                    await ApplyModeSwitchAsync(next);
+                else
+                    await SetModeAsync(next);
             });
         }
 

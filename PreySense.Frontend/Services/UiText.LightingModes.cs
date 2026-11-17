@@ -10,20 +10,20 @@ internal static partial class UiText
     private static void AddLightingModes()
     {
         AddAll("OFF", "关闭", "बंद", "Apagado", "Éteint", "Kapalı");
-        AddAll("STATIC", "常亮", "स्थिर", "Fijo", "Fixe", "Sabit");
+        AddAll("STATIC", "静态", "स्थिर", "Fijo", "Fixe", "Sabit");
         AddAll("BREATHING", "呼吸", "ब्रीदिंग", "Respiración", "Respiration", "Nefes");
-        AddAll("WAVE", "波浪", "वेव", "Onda", "Vague", "Dalga");
-        AddAll("SNAKE", "贪吃蛇", "स्नेक", "Serpiente", "Serpent", "Yılan");
-        AddAll("RIPPLE", "涟漪", "रिप्पल", "Ondulación", "Ondulation", "Dalgalanma");
+        AddAll("WAVE", "波形", "वेव", "Onda", "Vague", "Dalga");
+        AddAll("SNAKE", "蛇行", "स्नेक", "Serpiente", "Serpent", "Yılan");
+        AddAll("RIPPLE", "波纹", "रिप्पल", "Ondulación", "Ondulation", "Dalgalanma");
         AddAll("NEON", "霓虹", "नियॉन", "Neón", "Néon", "Neon");
         AddAll("RAINDROP", "雨滴", "बारिश की बूँद", "Gota de lluvia", "Goutte de pluie", "Yağmur damlası");
         AddAll("LIGHTNING", "闪电", "बिजली", "Relámpago", "Éclair", "Şimşek");
-        AddAll("SPOT", "聚光灯", "स्पॉट", "Foco", "Projecteur", "Spot");
-        AddAll("STAR", "星光", "तारा", "Estrella", "Étoile", "Yıldız");
+        AddAll("SPOT", "定点曝光", "स्पॉट", "Foco", "Projecteur", "Spot");
+        AddAll("STAR", "星星", "तारा", "Estrella", "Étoile", "Yıldız");
         AddAll("FIREBALL", "火球", "आग का गोला", "Bola de fuego", "Boule de feu", "Ateş topu");
-        AddAll("SNOW", "雪花", "बर्फ़", "Nieve", "Neige", "Kar");
+        AddAll("SNOW", "雪景", "बर्फ़", "Nieve", "Neige", "Kar");
         AddAll("HEARTBEAT", "心跳", "धड़कन", "Latido", "Battement", "Kalp atışı");
-        AddAll("DAZZLING", "炫彩", "चमकदार", "Deslumbrante", "Éblouissant", "Göz alıcı");
+        AddAll("DAZZLING", "炫丽", "चमकदार", "Deslumbrante", "Éblouissant", "Göz alıcı");
         AddAll("MATRIX", "矩阵", "मैट्रिक्स", "Matriz", "Matrice", "Matris");
         AddAll("SWIPING", "滑动", "स्वाइप", "Deslizamiento", "Glissement", "Kaydırma");
         AddAll("RACING", "竞速", "रेसिंग", "Carrera", "Course", "Yarış");
@@ -33,6 +33,10 @@ internal static partial class UiText
         AddAll("ROWWAVE", "行波", "पंक्ति तरंग", "Onda por filas", "Vague par rangées", "Sıra dalgası");
         AddAll("Light Show", "灯光秀", "लाइट शो", "Espectáculo de luz", "Spectacle lumineux", "Işık gösterisi");
         AddAll("Custom colors", "自定义颜色", "कस्टम रंग", "Colores personalizados", "Couleurs personnalisées", "Özel renkler");
+        // Acer HID keyboards expose these three effects on top of the shared list.
+        AddAll("Shifting", "流动", "बदलता हुआ", "Desplazamiento", "Décalage", "Kayma");
+        AddAll("Meteor", "流星", "उल्का", "Meteoro", "Météore", "Meteor");
+        AddAll("Twinkling", "闪烁", "टिमटिमाना", "Centelleo", "Scintillement", "Parıldama");
     }
 
     /// <summary>

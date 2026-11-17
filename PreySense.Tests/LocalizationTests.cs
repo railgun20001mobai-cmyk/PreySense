@@ -67,8 +67,27 @@ public class LocalizationTests
             foreach (string name in names)
                 Assert.IsTrue(table.ContainsKey(name), $"{language}: missing effect name {name}");
         }
-        Assert.AreEqual("常亮", UiText.For("zh-CN")!["STATIC"]);
+        Assert.AreEqual("静态", UiText.For("zh-CN")!["STATIC"]);
         Assert.AreEqual("呼吸", UiText.For("zh-CN")!["BREATHING"]);
+    }
+
+    [TestMethod]
+    public void DeviceEffectNames_HaveTranslationsInEveryLanguage()
+    {
+        // Mirrors the EC list in OemLightingController plus the Acer HID effect names; "Wave"
+        // was missing once and leaked into the Chinese Effect dropdown as English.
+        string[] names = ["Mode", "Custom colors", "Static", "Breathing", "Neon", "Wave", "Ripple", "Zoom",
+            "Snake", "Disco", "Shifting", "Meteor", "Twinkling"];
+        foreach (string language in new[] { "zh-CN", "hi-IN", "es-ES", "fr-FR", "tr-TR" })
+        {
+            var table = UiText.For(language)!;
+            foreach (string name in names)
+                Assert.IsTrue(table.ContainsKey(name), $"{language}: missing effect name {name}");
+        }
+        var chinese = UiText.For("zh-CN")!;
+        Assert.AreEqual("波形", chinese["Wave"]);
+        Assert.AreEqual("波纹", chinese["Ripple"]);
+        Assert.AreEqual("蛇行", chinese["Snake"]);
     }
 
     [TestMethod]
