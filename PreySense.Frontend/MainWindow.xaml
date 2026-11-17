@@ -34,8 +34,17 @@
                 <TextBlock Text="{Binding CpuFanText, Mode=OneWay}" Style="{StaticResource OriginalStatusTextStyle}" FontWeight="SemiBold"/>
               </StackPanel>
             </Grid>
-            <UniformGrid Columns="5" Rows="1" Margin="0,2,0,2">
-              <Button AutomationProperties.AutomationId="BtnModeEco" Command="{Binding SetModeCommand}" CommandParameter="6">
+            <Grid Margin="0,2,0,2">
+              <!-- Columns follow the power source: Eco is battery-only, Quiet/Performance/Turbo need AC. -->
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{Binding ShowEcoModeTile, Converter={StaticResource StarWhenTrueConverter}}"/>
+                <ColumnDefinition Width="{Binding ShowAcOnlyModeTiles, Converter={StaticResource StarWhenTrueConverter}}"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="{Binding ShowAcOnlyModeTiles, Converter={StaticResource StarWhenTrueConverter}}"/>
+                <ColumnDefinition Width="{Binding ShowAcOnlyModeTiles, Converter={StaticResource StarWhenTrueConverter}}"/>
+              </Grid.ColumnDefinitions>
+              <Button Grid.Column="0" Visibility="{Binding ShowEcoModeTile, Converter={StaticResource BoolToVis}}"
+                      AutomationProperties.AutomationId="BtnModeEco" Command="{Binding SetModeCommand}" CommandParameter="6">
                 <FrameworkElement.Style>
                   <Style BasedOn="{StaticResource OriginalRButtonTileStyle}" TargetType="{x:Type Button}">
                     <Setter Property="BorderBrush" Value="Transparent"/>
@@ -53,7 +62,8 @@
                   <TextBlock FontSize="{DynamicResource FontSizeTile}" HorizontalAlignment="Center" Text="Eco" />
                 </StackPanel>
               </Button>
-              <Button AutomationProperties.AutomationId="BtnModeQuiet" Command="{Binding SetModeCommand}" CommandParameter="0">
+              <Button Grid.Column="1" Visibility="{Binding ShowAcOnlyModeTiles, Converter={StaticResource BoolToVis}}"
+                      AutomationProperties.AutomationId="BtnModeQuiet" Command="{Binding SetModeCommand}" CommandParameter="0">
                 <FrameworkElement.Style>
                   <Style BasedOn="{StaticResource OriginalRButtonTileStyle}" TargetType="{x:Type Button}">
                     <Setter Property="BorderBrush" Value="Transparent"/>
@@ -71,7 +81,7 @@
                   <TextBlock Text="Quiet" FontSize="{DynamicResource FontSizeTile}" HorizontalAlignment="Center" />
                 </StackPanel>
               </Button>
-              <Button AutomationProperties.AutomationId="BtnModeBalanced" CommandParameter="1" Command="{Binding SetModeCommand}">
+              <Button Grid.Column="2" AutomationProperties.AutomationId="BtnModeBalanced" CommandParameter="1" Command="{Binding SetModeCommand}">
                 <FrameworkElement.Style>
                   <Style BasedOn="{StaticResource OriginalRButtonTileStyle}" TargetType="{x:Type Button}">
                     <Setter Property="BorderBrush" Value="Transparent"/>
@@ -89,7 +99,8 @@
                   <TextBlock Text="Balanced" FontSize="{DynamicResource FontSizeTile}" HorizontalAlignment="Center" />
                 </StackPanel>
               </Button>
-              <Button AutomationProperties.AutomationId="BtnModePerformance" CommandParameter="4" Command="{Binding SetModeCommand}">
+              <Button Grid.Column="3" Visibility="{Binding ShowAcOnlyModeTiles, Converter={StaticResource BoolToVis}}"
+                      AutomationProperties.AutomationId="BtnModePerformance" CommandParameter="4" Command="{Binding SetModeCommand}">
                 <FrameworkElement.Style>
                   <Style BasedOn="{StaticResource OriginalRButtonTileStyle}" TargetType="{x:Type Button}">
                     <Setter Property="BorderBrush" Value="Transparent"/>
@@ -107,7 +118,8 @@
                   <TextBlock Text="Performance" FontSize="{DynamicResource FontSizeTile}" TextTrimming="CharacterEllipsis" TextAlignment="Center" HorizontalAlignment="Center" />
                 </StackPanel>
               </Button>
-              <Button AutomationProperties.AutomationId="BtnModeTurbo" CommandParameter="5" Command="{Binding SetModeCommand}">
+              <Button Grid.Column="4" Visibility="{Binding ShowAcOnlyModeTiles, Converter={StaticResource BoolToVis}}"
+                      AutomationProperties.AutomationId="BtnModeTurbo" CommandParameter="5" Command="{Binding SetModeCommand}">
                 <FrameworkElement.Style>
                   <Style BasedOn="{StaticResource OriginalRButtonTileStyle}" TargetType="{x:Type Button}">
                     <Setter Property="BorderBrush" Value="Transparent"/>
@@ -125,7 +137,7 @@
                   <TextBlock Text="Turbo" FontSize="{DynamicResource FontSizeTile}" HorizontalAlignment="Center" />
                 </StackPanel>
               </Button>
-            </UniformGrid>
+            </Grid>
           </StackPanel>
         </Border>
         <Border Style="{StaticResource OriginalSectionPanelStyle}" Margin="{DynamicResource MainSectionMargin}">

@@ -47,6 +47,19 @@ namespace PreySense.Frontend.ViewModels
         public string EcoOrQuietModeName => Services.LocalizationService.Translate(IsAcConnected ? "Quiet" : "Eco");
         public string EcoOrQuietModeParam => IsAcConnected ? "0" : "6";
 
+        /// <summary>
+        /// Predator Sense only shows the modes the firmware keeps for the active source: Eco is
+        /// battery-only, and Quiet/Performance/Turbo need AC. The tiles follow the same rule.
+        /// </summary>
+        public bool ShowEcoModeTile => !IsAcConnected;
+        public bool ShowAcOnlyModeTiles => IsAcConnected;
+
+        partial void OnIsAcConnectedChanged(bool value)
+        {
+            OnPropertyChanged(nameof(ShowEcoModeTile));
+            OnPropertyChanged(nameof(ShowAcOnlyModeTiles));
+        }
+
         public IReadOnlyList<string> SourceProfileNames => ProfileManager.SourceProfileNames;
 
         [ObservableProperty] private int _acPowerModeIndex = ProfileManager.SourceProfileIndex(0x01);

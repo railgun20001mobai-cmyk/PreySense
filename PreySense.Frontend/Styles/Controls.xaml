@@ -8,6 +8,7 @@
   <Thickness x:Key="StandardSectionMargin">0,0,0,8</Thickness>
   <BooleanToVisibilityConverter x:Key="BoolToVis" />
   <services:TranslateConverter x:Key="TranslateConverter" />
+  <services:StarWhenTrueConverter x:Key="StarWhenTrueConverter" />
 
   <Style TargetType="{x:Type controls:ThemedIcon}">
     <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrush}" />
