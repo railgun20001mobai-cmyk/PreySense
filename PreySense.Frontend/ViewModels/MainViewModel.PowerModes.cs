@@ -214,10 +214,10 @@ namespace PreySense.Frontend.ViewModels
         }
 
         /// <summary>
-        /// Chassis mode-key order. Eco only exists on battery, so AC cycles the four modes the
-        /// EC really supports (Quiet → Balanced → Performance → Turbo). Setting Eco on AC made
-        /// the EC collapse it onto Balanced, which is why the UI ended up showing 节能 and 均衡
-        /// as the same mode. On battery all five modes are cycled.
+        /// Chassis mode-key order, matching Predator Sense: AC cycles four modes
+        /// (Quiet → Balanced → Performance → Turbo) and battery cycles two (Balanced → Eco).
+        /// Setting Eco on AC made the EC collapse it onto Balanced, which is why the UI ended up
+        /// showing 节能 and 平衡 as the same mode.
         /// </summary>
         internal static byte CyclePerformanceMode(byte current, bool onAc)
             => onAc ? CycleOnAc(current) : CycleOnBattery(current);
@@ -233,11 +233,9 @@ namespace PreySense.Frontend.ViewModels
 
         private static byte CycleOnBattery(byte current) => current switch
         {
-            0x06 => 0x00, // Eco → Quiet
-            0x00 => 0x01, // Quiet → Balanced
-            0x01 => 0x04, // Balanced → Performance
-            0x04 => 0x05, // Performance → Turbo
-            0x05 => 0x06, // Turbo → Eco
+            0x01 => 0x06, // Balanced → Eco
+            0x06 => 0x01, // Eco → Balanced
+            // Quiet/Performance/Turbo are AC-only; enter the battery pair at Balanced.
             _ => 0x01
         };
 
