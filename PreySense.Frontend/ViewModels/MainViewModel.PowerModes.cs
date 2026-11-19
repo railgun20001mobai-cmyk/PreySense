@@ -88,14 +88,14 @@ namespace PreySense.Frontend.ViewModels
                 if (actual is not byte confirmed || !ProfileManager.IsSupportedMode(confirmed) || _disposed) return;
                 if (confirmed == modeBeforeKey)
                 {
-                    _dispatcher.InvokeAsync(() =>
+                    _ = _dispatcher.InvokeAsync(() =>
                     {
                         if (_disposed) return;
                         _ = SetModeAsync(CyclePerformanceMode(confirmed, IsAcConnected));
                     });
                     return;
                 }
-                _dispatcher.InvokeAsync(() =>
+                _ = _dispatcher.InvokeAsync(() =>
                 {
                     if (_disposed || PeekPendingOrActiveMode() == confirmed) return;
                     ActivePowerMode = confirmed;

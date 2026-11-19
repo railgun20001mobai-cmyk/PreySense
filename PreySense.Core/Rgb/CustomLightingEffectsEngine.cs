@@ -31,7 +31,8 @@ namespace PreySense.Rgb
         PlasmaOrb = 22,
         GlitchStorm = 23,
         BioHazard = 24,
-        SolarFlare = 25
+        SolarFlare = 25,
+        ScreenMimic = 26
     }
 
     /// <summary>
@@ -50,6 +51,10 @@ namespace PreySense.Rgb
         private int _speed = 50;
         private Color _activeBrushColor = Color.FromArgb(0, 240, 255); // Default Predator
         private readonly Color[] _zoneColors = new Color[4];
+        // Screen-mimic sampling is far more expensive than a frame step, so it runs at ~8 Hz.
+        private readonly Color[] _screenBands = new Color[4];
+        private readonly Color[] _rawScreenBands = new Color[4];
+        private long _lastScreenSampleTicks;
         private readonly Random _rng = new();
         private readonly object _lock = new();
         private bool _isDisposed;
@@ -383,6 +388,12 @@ namespace PreySense.Rgb
                             hwThrottleMs = Math.Max(55, 160 - (int)(_speed * 1.0));
                             break;
 
+                        case CustomEffectMode.ScreenMimic:
+                            GenerateScreenMimicFrame(frame);
+                            // The EC needs real time between frame writes; screen colours drift slowly anyway.
+                            hwThrottleMs = Math.Max(90, 200 - (int)(_speed * 1.2));
+                            break;
+
                         default:
                             for (int i = 0; i < 4; i++) frame[i] = _zoneColors[i];
                             break;
@@ -478,6 +489,39 @@ namespace PreySense.Rgb
         }
 
         #region Effect Generators
+
+        /// <summary>
+        /// Predator Sense "screen mimic" equivalent: each of the four zones tracks a horizontal
+        /// slice of the primary display. Screen content is usually dim, so the sampled colours are
+        /// lifted to stay visible through the keycaps.
+        /// </summary>
+        private void GenerateScreenMimicFrame(Color[] frame)
+        {
+            long now = Stopwatch.GetTimestamp();
+            if (now - _lastScreenSampleTicks >= Stopwatch.Frequency / 8)
+            {
+                _lastScreenSampleTicks = now;
+                if (DesktopScreenSampler.TrySampleBands(_rawScreenBands))
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Color raw = _rawScreenBands[i];
+                        _screenBands[i] = Color.FromArgb(
+                            Math.Min(255, (int)(raw.R * 1.35) + 14),
+                            Math.Min(255, (int)(raw.G * 1.35) + 14),
+                            Math.Min(255, (int)(raw.B * 1.35) + 14));
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < 4; i++)
+                        _screenBands[i] = Color.FromArgb(0, 90, 140);
+                }
+            }
+
+            for (int i = 0; i < 4; i++)
+                frame[i] = _screenBands[i];
+        }
 
         private void GenerateRainbowCycleFrame(Color[] frame, double step)
         {

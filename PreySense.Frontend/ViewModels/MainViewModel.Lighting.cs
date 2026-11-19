@@ -1066,6 +1066,7 @@ namespace PreySense.Frontend.ViewModels
                     CustomEffectMode.GlitchStorm => "Glitch Storm",
                     CustomEffectMode.BioHazard => "Bio Hazard",
                     CustomEffectMode.SolarFlare => "Solar Flare",
+                    CustomEffectMode.ScreenMimic => "Screen Mimic",
                     _ => effect.ToString()
                 };
             }

@@ -34,6 +34,7 @@ internal static partial class UiText
         AddAll("Light Show", "灯光秀", "लाइट शो", "Espectáculo de luz", "Spectacle lumineux", "Işık gösterisi");
         AddAll("Custom colors", "自定义颜色", "कस्टम रंग", "Colores personalizados", "Couleurs personnalisées", "Özel renkler");
         // Acer HID keyboards expose these three effects on top of the shared list.
+        AddAll("Screen Mimic", "屏幕模仿", "स्क्रीन सिंक", "Imitación de pantalla", "Imitation d’écran", "Ekran taklidi");
         AddAll("Shifting", "流动", "बदलता हुआ", "Desplazamiento", "Décalage", "Kayma");
         AddAll("Meteor", "流星", "उल्का", "Meteoro", "Météore", "Meteor");
         AddAll("Twinkling", "闪烁", "टिमटिमाना", "Centelleo", "Scintillement", "Parıldama");

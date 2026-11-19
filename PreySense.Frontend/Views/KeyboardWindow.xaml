@@ -388,6 +388,7 @@
                                     <ComboBoxItem Content="Glitch Storm" Tag="DYN:GlitchStorm"/>
                                     <ComboBoxItem Content="Bio Hazard" Tag="DYN:BioHazard"/>
                                     <ComboBoxItem Content="Solar Flare" Tag="DYN:SolarFlare"/>
+                                    <ComboBoxItem Content="Screen Mimic" Tag="DYN:ScreenMimic"/>
                                 </ComboBox>
                             </Grid>
 
