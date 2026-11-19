@@ -138,6 +138,10 @@
                 </StackPanel>
               </Button>
             </Grid>
+            <TextBlock Text="Predator Sense is running: it keeps its own mode and takes over the mode key. Exit it so PreySense can control both."
+                       Visibility="{Binding IsOemModeAppRunning, Converter={StaticResource BoolToVis}}"
+                       Foreground="{DynamicResource WarningBrush}" TextWrapping="Wrap"
+                       FontSize="{DynamicResource FontSizeBody}" Margin="4,6,4,0"/>
           </StackPanel>
         </Border>
         <Border Style="{StaticResource OriginalSectionPanelStyle}" Margin="{DynamicResource MainSectionMargin}">

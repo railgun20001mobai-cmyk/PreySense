@@ -24,6 +24,14 @@ internal static partial class UiText
         French["Enable CPU Boost Tuning"] = "Activer le réglage CPU Boost";
         Turkish["Enable CPU Boost Tuning"] = "CPU Boost ayarını etkinleştir";
 
+        // Shown under the mode tiles while Predator Sense owns the mode key.
+        AddAll("Predator Sense is running: it keeps its own mode and takes over the mode key. Exit it so PreySense can control both.",
+            "Predator Sense 正在运行：它会缓存自己的模式并接管模式键。退出它后由 PreySense 统一控制。",
+            "Predator Sense चल रहा है: यह अपना मोड याद रखता है और मोड कुंजी संभालता है। दोनों को PreySense से नियंत्रित करने के लिए इसे बंद करें।",
+            "Predator Sense está en ejecución: conserva su propio modo y controla la tecla de modo. Ciérralo para que PreySense controle ambos.",
+            "Predator Sense est en cours d’exécution : il conserve son propre mode et gère la touche de mode. Fermez-le pour que PreySense contrôle les deux.",
+            "Predator Sense çalışıyor: kendi modunu saklar ve mod tuşunu yönetir. PreySense'in ikisini de denetlemesi için kapatın.");
+
         // Game profile validation results are shown in the Games window status line.
         AddAll("Invalid power mode.",
             "电源模式无效。", "अमान्य पावर मोड।", "Modo de energía no válido.", "Mode d’alimentation non valide.", "Geçersiz güç modu.");

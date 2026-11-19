@@ -60,6 +60,54 @@ namespace PreySense.Frontend.ViewModels
             OnPropertyChanged(nameof(ShowAcOnlyModeTiles));
         }
 
+        /// <summary>True while Predator Sense / Nitro Sense runs and keeps the mode key.</summary>
+        [ObservableProperty] private bool _isOemModeAppRunning;
+
+        internal void RefreshOemModeAppState()
+        {
+            bool running = Services.OemModeAppDetector.IsRunning();
+            if (running != IsOemModeAppRunning)
+                IsOemModeAppRunning = running;
+        }
+
+        /// <summary>
+        /// The OEM app is expected to apply the key itself, so mirror the mode it settled on
+        /// instead of writing the EC. If the EC still holds the pre-key mode the OEM did not act
+        /// (suspended, or its own key behaviour is "do nothing") and PreySense steps in so the
+        /// key never goes dead.
+        /// </summary>
+        private void ScheduleOemModeSync(byte modeBeforeKey)
+        {
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(AcerOperatingModeTiming.TransitionDelay + TimeSpan.FromMilliseconds(1200)).ConfigureAwait(false);
+                if (_disposed) return;
+                byte? actual = null;
+                try { actual = _hw.TryGetPowerMode(out byte read) ? read : null; }
+                catch (Exception ex) { AppLogger.Error($"Could not read the Acer mode after the OEM key press: {ex}"); }
+                if (actual is not byte confirmed || !ProfileManager.IsSupportedMode(confirmed) || _disposed) return;
+                if (confirmed == modeBeforeKey)
+                {
+                    _dispatcher.InvokeAsync(() =>
+                    {
+                        if (_disposed) return;
+                        _ = SetModeAsync(CyclePerformanceMode(confirmed, IsAcConnected));
+                    });
+                    return;
+                }
+                _dispatcher.InvokeAsync(() =>
+                {
+                    if (_disposed || PeekPendingOrActiveMode() == confirmed) return;
+                    ActivePowerMode = confirmed;
+                    UpdateModeName(confirmed);
+                    NotifyModeSelectionsChanged();
+                    RememberSourceProfile(confirmed);
+                    ScheduleHotkeyLightingRestoreAfterModeSwitch();
+                    PersistSessionSettings();
+                });
+            });
+        }
+
         public IReadOnlyList<string> SourceProfileNames => ProfileManager.SourceProfileNames;
 
         [ObservableProperty] private int _acPowerModeIndex = ProfileManager.SourceProfileIndex(0x01);

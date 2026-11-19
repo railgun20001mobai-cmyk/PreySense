@@ -22,6 +22,7 @@ namespace PreySense.Frontend.ViewModels
         private readonly Dispatcher _dispatcher;
         private readonly TurboKeyWatcher _turboKeyWatcher;
         private readonly HidModeKeyWatcher _hidModeKeyWatcher;
+        private readonly DispatcherTimer _oemModeAppTimer;
         private DateTime _lastPhysicalModeKeyUtc;
         private int _powerSourceUpdateQueued;
         private bool _disposed;
@@ -144,6 +145,12 @@ namespace PreySense.Frontend.ViewModels
             // Firmware changes illumination; mirror Fn steps into the editor and saved profile.
             _hidModeKeyWatcher = new HidModeKeyWatcher(HandleModeKeyPressed,
                 delta => HandleFnBrightness(delta, "HID"));
+            // Predator Sense keeps its own mode state; surface it so the warning below the mode
+            // tiles explains why the two apps disagree.
+            _oemModeAppTimer = new DispatcherTimer(TimeSpan.FromSeconds(10), DispatcherPriority.Background,
+                (_, _) => RefreshOemModeAppState(), _dispatcher);
+            _oemModeAppTimer.Start();
+            RefreshOemModeAppState();
 
             UpdateFanDemand();
 
@@ -324,6 +331,14 @@ namespace PreySense.Frontend.ViewModels
                 if ((DateTime.UtcNow - _lastPhysicalModeKeyUtc).TotalMilliseconds < 80)
                     return;
                 _lastPhysicalModeKeyUtc = DateTime.UtcNow;
+                if (OemModeAppDetector.IsRunning())
+                {
+                    // Predator Sense owns the key while it runs and applies its own sequence.
+                    // Writing the EC here too makes both apps fight over every press.
+                    RefreshOemModeAppState();
+                    ScheduleOemModeSync(PeekPendingOrActiveMode());
+                    return;
+                }
                 // The local view can trail the EC (firmware-side key handling, a just-finished
                 // AC/battery transition), so cycle from the hardware state and power source.
                 var state = await Task.Run(() =>
@@ -372,6 +387,7 @@ namespace PreySense.Frontend.ViewModels
             _hw.PowerModeChanged -= OnPowerModeChanged;
             SystemEvents.DisplaySettingsChanged -= OnDisplaySettingsChanged;
             DisposeDisplaySettingsWatcher();
+            _oemModeAppTimer.Stop();
             _turboKeyWatcher.TurboKeyPressed -= OnTurboKeyPressed;
             _turboKeyWatcher.PowerSourceReceived -= OnAcerPowerSourceReceived;
             _turboKeyWatcher.Dispose();

@@ -29,6 +29,14 @@ public class MainWindowModeTileTests
     }
 
     [TestMethod]
+    public void MainWindow_WarnsWhilePredatorSenseOwnsTheModeKey()
+    {
+        string root = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppContext.BaseDirectory, "..", "..", "..", ".."));
+        string xaml = System.IO.File.ReadAllText(System.IO.Path.Combine(root, "PreySense.Frontend", "MainWindow.xaml"));
+        Assert.Contains("Binding IsOemModeAppRunning", xaml);
+    }
+
+    [TestMethod]
     public void HiddenModeTiles_GiveTheirColumnBackInsteadOfLeavingAGap()
     {
         string root = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppContext.BaseDirectory, "..", "..", "..", ".."));
