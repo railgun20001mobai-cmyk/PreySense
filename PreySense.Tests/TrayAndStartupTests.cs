@@ -26,6 +26,16 @@ namespace PreySense.Tests
         }
 
         [TestMethod]
+        public void StartupTask_LogonTrigger_WaitsForTheShell()
+        {
+            string xml = StartupTaskService.BuildLogonTaskXml(
+                @"D:\Applications\PreySense.exe", "S-1-5-21-1-2-3-1001");
+            // A tray app started before Explorer is ready can fail to register its icon, which
+            // looks exactly like "startup did not run".
+            StringAssert.Contains(xml, "<Delay>PT10S</Delay>");
+        }
+
+        [TestMethod]
         public void StartupTask_WorkingDirectory_IsValidXmlWithSpecialCharacters()
         {
             string xml = StartupTaskService.BuildLogonTaskXml(

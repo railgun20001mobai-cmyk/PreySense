@@ -58,6 +58,7 @@ namespace PreySense.Frontend.Services
                   <Triggers>
                     <LogonTrigger>
                       <Enabled>true</Enabled>
+                      <Delay>PT10S</Delay>
                     </LogonTrigger>
                   </Triggers>
                   <Actions Context="Author">
@@ -224,7 +225,8 @@ namespace PreySense.Frontend.Services
                     actions?.Elements().Count() == 1 &&
                     trigger?.Element(ns + "EndBoundary") == null &&
                     trigger?.Element(ns + "StartBoundary") == null &&
-                    trigger?.Element(ns + "Delay") == null &&
+                    // The shell needs a moment after logon before a tray app can register itself.
+                    trigger?.Element(ns + "Delay")?.Value.Trim() is null or "PT10S" &&
                     exec?.Element(ns + "Arguments")?.Value == "--minimized" &&
                     string.Equals(exec?.Element(ns + "WorkingDirectory")?.Value, workingDirectory,
                         StringComparison.OrdinalIgnoreCase) &&

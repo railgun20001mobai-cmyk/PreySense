@@ -71,7 +71,8 @@ public class StartupTaskRegistrationTests
         Assert.IsTrue(MatchesTaskXml(fake.Xml!, _exe, User));
         var saved = XDocument.Parse(fake.Xml!);
         Assert.AreEqual(_directory, saved.Descendants(Ns + "WorkingDirectory").Single().Value);
-        Assert.IsFalse(saved.Descendants(Ns + "Delay").Any(), "No logon delay is requested.");
+        Assert.AreEqual("PT10S", saved.Descendants(Ns + "Delay").Single().Value,
+            "A short logon delay keeps tray registration reliable when Explorer is still starting.");
     }
 
     [TestMethod]
